@@ -7,7 +7,8 @@ import (
 	geEvent "github.com/grassrootseconomics/eth-tracker/pkg/event"
 
 	"git.defalsify.org/vise.git/logging"
-	"git.grassecon.net/urdt/ussd/common"
+	"git.grassecon.net/grassrootseconomics/visedriver/storage"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
 )
 
 var (
@@ -16,7 +17,7 @@ var (
 
 // Router is responsible for invoking handlers corresponding to events.
 type Router struct {
-	Store common.StorageServices
+	Store storage.StorageService
 }
 
 // Route parses an event from the event stream, and resolves the handler
@@ -26,12 +27,12 @@ type Router struct {
 // handler fails to successfully execute.
 func(r *Router) Route(ctx context.Context, gev *geEvent.Event) error {
 	logg.DebugCtxf(ctx, "have event", "ev", gev)
-	store, err := r.Store.GetUserdataDb(ctx)
+	userDb, err := r.Store.GetUserdataDb(ctx)
 	if err != nil {
 		return err
 	}
-	userStore := &common.UserDataStore{
-		Db: store,
+	userStore := &store.UserDataStore{
+		Db: userDb,
 	}
 	evCC, ok := asCustodialRegistrationEvent(gev)
 	if ok {

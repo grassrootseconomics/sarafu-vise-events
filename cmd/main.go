@@ -8,41 +8,31 @@ import (
 	"os/signal"
 	"syscall"
 
-	"git.grassecon.net/urdt/ussd/initializers"
-	"git.grassecon.net/urdt/ussd/common"
-	"git.grassecon.net/term/config"
-	"git.grassecon.net/term/event/nats"
+	"git.grassecon.net/grassrootseconomics/visedriver/storage"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event/nats"
 )
-
-func init() {
-	initializers.LoadEnvVariables()
-}
 
 func main() {
 	config.LoadConfig()
 
-	var database string
-	var dbDir string
+	var connStr string
 
-	flag.StringVar(&database, "db", "gdbm", "database to be used")
-	flag.StringVar(&dbDir, "dbdir", ".state", "database dir to read from")
+	flag.StringVar(&connStr, "c", "", "connection string")
 	flag.Parse()
 
-	ctx := context.Background()
-	ctx = context.WithValue(ctx, "Database", database)
-//	db := mem.NewMemDb()
-//	err := db.Connect(ctx, "")
-//	if err != nil {
-//		fmt.Fprintf(os.Stderr, "Db connect err: %v", err)
-//		os.Exit(1)
-//	}
-
-	menuStorageService := common.NewStorageService(dbDir)
-	err := menuStorageService.EnsureDbDir()
+	if connStr != "" {
+		connStr = config.DbConn()
+	}
+	connData, err := storage.ToConnData(connStr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintf(os.Stderr, "connstr err: %v", err)
 		os.Exit(1)
 	}
+
+	ctx := context.Background()
+
+	menuStorageService := storage.NewMenuStorageService(connData, "")
 
 	n := nats.NewNatsSubscription(menuStorageService)
 	err = n.Connect(ctx, config.JetstreamURL)

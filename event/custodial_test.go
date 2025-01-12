@@ -9,9 +9,11 @@ import (
 	"git.defalsify.org/vise.git/persist"
 	"git.defalsify.org/vise.git/state"
 	"git.defalsify.org/vise.git/cache"
-	"git.grassecon.net/urdt/ussd/config"
-	"git.grassecon.net/urdt/ussd/common"
-	"git.grassecon.net/term/internal/testutil"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
+	"git.grassecon.net/grassrootseconomics/common/hex"
+	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 )
 
 func TestCustodialRegistration(t *testing.T) {
@@ -27,18 +29,18 @@ func TestCustodialRegistration(t *testing.T) {
 		panic(err)
 	}
 
-	alice, err := common.NormalizeHex(testutil.AliceChecksum)
+	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	userDb.SetSession(alice)
 	userDb.SetPrefix(db.DATATYPE_USERDATA)
-	err = userDb.Put(ctx, common.PackKey(common.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
+	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
 	if err != nil {
 		t.Fatal(err)
 	}
-	store := common.UserDataStore{
+	store := store.UserDataStore{
 		Db: userDb,
 	}
 

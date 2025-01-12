@@ -1,12 +1,15 @@
-module git.grassecon.net/term
+module git.grassecon.net/grassrootseconomics/sarafu-vise-events
 
-go 1.23.2
+go 1.23.4
 
 require (
-	git.defalsify.org/vise.git v0.2.1-0.20241031204035-b588301738ed
-	git.grassecon.net/urdt/ussd v0.0.0-20241104231804-859de0513ae5
+	git.defalsify.org/vise.git v0.2.3-0.20250103172917-3e190a44568d
+	git.grassecon.net/grassrootseconomics/common v0.0.0-20250112102149-4feac5e490e9
+	git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250112121504-be11eea04bc1
+	git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250112121425-f089822300c5
+	git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250112121325-9e4c65c8b4d1
 	github.com/grassrootseconomics/eth-tracker v1.3.0-rc
-	github.com/grassrootseconomics/ussd-data-service v0.0.0-20241003123429-4904b4438a3a
+	github.com/grassrootseconomics/ussd-data-service v1.2.0-beta
 	github.com/nats-io/nats.go v1.37.0
 )
 
@@ -21,11 +24,13 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.17.2 // indirect
+	github.com/mattn/kinako v0.0.0-20170717041458-332c0a7e205a // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	golang.org/x/crypto v0.27.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.25.0 // indirect
-	golang.org/x/text v0.18.0 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
+	gopkg.in/leonelquinteros/gotext.v1 v1.3.1 // indirect
 )

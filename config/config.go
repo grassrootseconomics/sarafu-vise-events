@@ -1,8 +1,8 @@
 package config
 
 import (
-	urdtconfig "git.grassecon.net/urdt/ussd/config"
-	"git.grassecon.net/urdt/ussd/initializers"
+	viseconfig "git.grassecon.net/grassrootseconomics/visedriver/config"
+	"git.grassecon.net/grassrootseconomics/visedriver/env"
 )
 
 var (
@@ -10,10 +10,23 @@ var (
 	JetstreamClientName string
 )
 
+const (
+	defaultJetstreamURL string = "localhost:4222"
+	defaultJetstreamClientName string = "omnom"
+)
 
-func LoadConfig() {
-	urdtconfig.LoadConfig()
 
-	JetstreamURL = initializers.GetEnv("NATS_JETSTREAM_URL", "localhost:4222")
-	JetstreamClientName = initializers.GetEnv("NATS_JETSTREAM_CLIENT_NAME", "omnom")
+func LoadConfig() error {
+	err := viseconfig.LoadConfig()
+	if err != nil {
+		return err
+	}
+
+	JetstreamURL = env.GetEnv("NATS_JETSTREAM_URL", defaultJetstreamURL)
+	JetstreamClientName = env.GetEnv("NATS_JETSTREAM_CLIENT_NAME", defaultJetstreamClientName)
+	return nil
+}
+
+func DbConn() string {
+	return viseconfig.DbConn
 }

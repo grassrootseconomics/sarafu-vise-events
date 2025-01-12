@@ -1,10 +1,11 @@
 package lookup
 
 import (
-	"git.grassecon.net/urdt/ussd/remote"
+	"git.grassecon.net/grassrootseconomics/sarafu-api/remote/http"
+	"git.grassecon.net/grassrootseconomics/sarafu-api/remote"
 )
 
 var (
 	// Api provides the api implementation for all external lookups.
-	Api remote.AccountServiceInterface = &remote.AccountService{}
+	Api remote.AccountService = &http.HTTPAccountService{}
 )

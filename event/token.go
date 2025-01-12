@@ -10,13 +10,15 @@ import (
 	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
 
 	"git.defalsify.org/vise.git/db"
-	"git.grassecon.net/urdt/ussd/common"
-	"git.grassecon.net/term/lookup"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
+	"git.grassecon.net/grassrootseconomics/common/hex"
+	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
 )
 
 const (
 	evTokenTransfer = "TOKEN_TRANSFER"
-	// TODO: export from urdt storage package
+	// TODO: export from visedriver storage package
 	DATATYPE_USERSUB = 64
 )
 
@@ -45,7 +47,7 @@ func formatTransaction(idx int, tx dataserviceapi.Last10TxResponse) string {
 }
 
 // refresh and store transaction history.
-func updateTokenTransferList(ctx context.Context, store *common.UserDataStore, identity lookup.Identity) error {
+func updateTokenTransferList(ctx context.Context, userStore *store.UserDataStore, identity lookup.Identity) error {
 	var r []string
 
 	txs, err := lookup.Api.FetchTransactions(ctx, identity.ChecksumAddress)
@@ -59,45 +61,43 @@ func updateTokenTransferList(ctx context.Context, store *common.UserDataStore, i
 
 	s := strings.Join(r, "\n")
 
-	return store.WriteEntry(ctx, identity.SessionId, common.DATA_TRANSACTIONS, []byte(s))
+	return userStore.WriteEntry(ctx, identity.SessionId, storedb.DATA_TRANSACTIONS, []byte(s))
 }
 
 // refresh and store token list.
-//
-// TODO: when subprefixdb has been exported, can use function in ...urdt/ussd/common/ instead
-func updateTokenList(ctx context.Context, store *common.UserDataStore, identity lookup.Identity) error {
+func updateTokenList(ctx context.Context, userStore *store.UserDataStore, identity lookup.Identity) error {
 	holdings, err := lookup.Api.FetchVouchers(ctx, identity.ChecksumAddress)
 	if err != nil {
 		return err
 	}
-	metadata := common.ProcessVouchers(holdings)
+	metadata := store.ProcessVouchers(holdings)
 	_ = metadata
 
 	// TODO: make sure subprefixdb is thread safe when using gdbm
 	// TODO: why is address session here unless explicitly set
-	store.Db.SetSession(identity.SessionId)
-	store.Db.SetPrefix(DATATYPE_USERSUB)
+	userStore.Db.SetSession(identity.SessionId)
+	userStore.Db.SetPrefix(DATATYPE_USERSUB)
 
 	k := append([]byte("vouchers"), []byte("sym")...)
-	err = store.Db.Put(ctx, k, []byte(metadata.Symbols))
+	err = userStore.Db.Put(ctx, k, []byte(metadata.Symbols))
 	if err != nil {
 		return err
 	}
 	logg.TraceCtxf(ctx, "processvoucher", "key", k)
 	k = append([]byte("vouchers"), []byte("bal")...)
-	err = store.Db.Put(ctx, k, []byte(metadata.Balances))
+	err = userStore.Db.Put(ctx, k, []byte(metadata.Balances))
 	if err != nil {
 		return err
 	}
 
 	k = append([]byte("vouchers"), []byte("deci")...)
-	err = store.Db.Put(ctx, k, []byte(metadata.Decimals))
+	err = userStore.Db.Put(ctx, k, []byte(metadata.Decimals))
 	if err != nil {
 		return err
 	}
 
 	k = append([]byte("vouchers"), []byte("addr")...)
-	err = store.Db.Put(ctx, k, []byte(metadata.Addresses))
+	err = userStore.Db.Put(ctx, k, []byte(metadata.Addresses))
 	if err != nil {
 		return err
 	}
@@ -106,14 +106,14 @@ func updateTokenList(ctx context.Context, store *common.UserDataStore, identity 
 }
 
 // set default token to given symbol.
-func updateDefaultToken(ctx context.Context, store *common.UserDataStore, identity lookup.Identity, activeSym string) error {
-	pfxDb := common.StoreToPrefixDb(store, []byte("vouchers"))
+func updateDefaultToken(ctx context.Context, userStore *store.UserDataStore, identity lookup.Identity, activeSym string) error {
+	pfxDb := store.StoreToPrefixDb(userStore, []byte("vouchers"))
 	// TODO: the activeSym input should instead be newline separated list?
-	tokenData, err := common.GetVoucherData(ctx, pfxDb, activeSym)
+	tokenData, err := store.GetVoucherData(ctx, pfxDb, activeSym)
 	if err != nil {
 		return err
 	}
-	return common.UpdateVoucherData(ctx, store, identity.SessionId, tokenData)
+	return store.UpdateVoucherData(ctx, userStore, identity.SessionId, tokenData)
 }
 
 // waiter to check whether object is available on dependency endpoints.
@@ -131,14 +131,14 @@ func toSym(ctx context.Context, address string) ([]byte, error) {
 }
 
 // execute all 
-func updateToken(ctx context.Context, store *common.UserDataStore, identity lookup.Identity, tokenAddress string) error {
-	err := updateTokenList(ctx, store, identity)
+func updateToken(ctx context.Context, userStore *store.UserDataStore, identity lookup.Identity, tokenAddress string) error {
+	err := updateTokenList(ctx, userStore, identity)
 	if err != nil {
 		return err
 	}
 
-	store.Db.SetSession(identity.SessionId)
-	activeSym, err := store.ReadEntry(ctx, identity.SessionId, common.DATA_ACTIVE_SYM)
+	userStore.Db.SetSession(identity.SessionId)
+	activeSym, err := userStore.ReadEntry(ctx, identity.SessionId, storedb.DATA_ACTIVE_SYM)
 	if err == nil {
 		return nil
 	}
@@ -153,12 +153,12 @@ func updateToken(ctx context.Context, store *common.UserDataStore, identity look
 	}
 	logg.Debugf("barfoo")
 
-	err = updateDefaultToken(ctx, store, identity, string(activeSym))
+	err = updateDefaultToken(ctx, userStore, identity, string(activeSym))
 	if err != nil {
 		return err
 	}
 
-	err = updateTokenTransferList(ctx, store, identity)
+	err = updateTokenTransferList(ctx, userStore, identity)
 	if err != nil {
 		return err
 	}
@@ -186,7 +186,7 @@ func asTokenTransferEvent(gev *geEvent.Event) (*eventTokenTransfer, bool) {
 	if !ok {
 		return nil, false
 	}
-	ev.TxHash, err = common.NormalizeHex(gev.TxHash)
+	ev.TxHash, err = hex.NormalizeHex(gev.TxHash)
 	if err != nil {
 		logg.Errorf("could not decode tx hash", "tx", gev.TxHash, "err", err)
 		return nil, false
@@ -210,27 +210,27 @@ func asTokenTransferEvent(gev *geEvent.Event) (*eventTokenTransfer, bool) {
 // handle token transfer.
 //
 // if from and to are NOT the same, handle code will be executed once for each side of the transfer.
-func handleTokenTransfer(ctx context.Context, store *common.UserDataStore, ev *eventTokenTransfer) error {
-	identity, err := lookup.IdentityFromAddress(ctx, store, ev.From)
+func handleTokenTransfer(ctx context.Context, userStore *store.UserDataStore, ev *eventTokenTransfer) error {
+	identity, err := lookup.IdentityFromAddress(ctx, userStore, ev.From)
 	if err != nil {
 		if !db.IsNotFound(err) {
 			return err
 		}
 	} else {
-		err = updateToken(ctx, store, identity, ev.VoucherAddress)
+		err = updateToken(ctx, userStore, identity, ev.VoucherAddress)
 		if err != nil {
 			return err
 		}
 	}
 
 	if strings.Compare(ev.To, ev.From) != 0 {
-		identity, err = lookup.IdentityFromAddress(ctx, store, ev.To)
+		identity, err = lookup.IdentityFromAddress(ctx, userStore, ev.To)
 		if err != nil {
 			if !db.IsNotFound(err) {
 				return err
 			}
 		} else {
-			err = updateToken(ctx, store, identity, ev.VoucherAddress)
+			err = updateToken(ctx, userStore, identity, ev.VoucherAddress)
 			if err != nil {
 				return err
 			}
@@ -241,14 +241,14 @@ func handleTokenTransfer(ctx context.Context, store *common.UserDataStore, ev *e
 }
 
 // handle token mint.
-func handleTokenMint(ctx context.Context, store *common.UserDataStore, ev *eventTokenMint) error {
-	identity, err := lookup.IdentityFromAddress(ctx, store, ev.To)
+func handleTokenMint(ctx context.Context, userStore *store.UserDataStore, ev *eventTokenMint) error {
+	identity, err := lookup.IdentityFromAddress(ctx, userStore, ev.To)
 	if err != nil {
 		if !db.IsNotFound(err) {
 			return err
 		}
 	} else {
-		err = updateToken(ctx, store, identity, ev.VoucherAddress)
+		err = updateToken(ctx, userStore, identity, ev.VoucherAddress)
 		if err != nil {
 			return err
 		}

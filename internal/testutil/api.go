@@ -5,11 +5,11 @@ import (
 
 	"git.defalsify.org/vise.git/logging"
 	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
-	"git.grassecon.net/urdt/ussd/models"
+	"git.grassecon.net/grassrootseconomics/sarafu-api/models"
 )
 
 var (
-	logg = logging.NewVanilla().WithDomain("term-testutiL")
+	logg = logging.NewVanilla().WithDomain("sarafu-vise-events.testutil")
 )
 
 const (
@@ -48,4 +48,12 @@ func(m MockApi) FetchTransactions(ctx context.Context, publicKey string) ([]data
 
 func(m MockApi) VoucherData(ctx context.Context, address string) (*models.VoucherDataResult, error) {
 	return m.VoucherDataContent, nil
+}
+
+func(m MockApi) CheckAliasAddress(ctx context.Context, alias string) (*dataserviceapi.AliasAddress, error) {
+	return nil, nil
+}
+
+func(m MockApi) TokenTransfer(ctx context.Context, amount, from, to, tokenAddress string) (*models.TokenTransferResponse, error) {
+	return nil, nil
 }

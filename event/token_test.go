@@ -11,11 +11,13 @@ import (
 	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
 	"git.defalsify.org/vise.git/db"
 	memdb "git.defalsify.org/vise.git/db/mem"
-	"git.grassecon.net/urdt/ussd/config"
-	"git.grassecon.net/urdt/ussd/models"
-	"git.grassecon.net/term/lookup"
-	"git.grassecon.net/urdt/ussd/common"
-	"git.grassecon.net/term/internal/testutil"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
+	"git.grassecon.net/grassrootseconomics/sarafu-api/models"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
+	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
+	"git.grassecon.net/grassrootseconomics/common/hex"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 )
 
 const (
@@ -53,7 +55,8 @@ func TestTokenTransfer(t *testing.T) {
 	api.VoucherDataContent = &models.VoucherDataResult{
 		TokenSymbol: tokenSymbol,
 		TokenName: tokenName,
-		TokenDecimals: strconv.Itoa(tokenDecimals),
+		//TokenDecimals: strconv.Itoa(tokenDecimals),
+		TokenDecimals: tokenDecimals,
 		SinkAddress: sinkAddress,
 	}
 	api.VouchersContent = []dataserviceapi.TokenHoldings{
@@ -73,7 +76,7 @@ func TestTokenTransfer(t *testing.T) {
 		panic(err)
 	}
 
-	alice, err := common.NormalizeHex(testutil.AliceChecksum)
+	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,11 +84,11 @@ func TestTokenTransfer(t *testing.T) {
 	// TODO: deduplicate test setup
 	userDb.SetSession(alice)
 	userDb.SetPrefix(db.DATATYPE_USERDATA)
-	err = userDb.Put(ctx, common.PackKey(common.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
+	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
 	if err != nil {
 		t.Fatal(err)
 	}
-	store := common.UserDataStore{
+	userStore := store.UserDataStore{
 		Db: userDb,
 	}
 
@@ -94,12 +97,12 @@ func TestTokenTransfer(t *testing.T) {
 		To: testutil.AliceChecksum,
 		Value: txValue,
 	}
-	err = handleTokenTransfer(ctx, &store, ev)
+	err = handleTokenTransfer(ctx, &userStore, ev)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	v, err := store.ReadEntry(ctx, testutil.AliceSession, common.DATA_ACTIVE_SYM)
+	v, err := userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_SYM)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +110,7 @@ func TestTokenTransfer(t *testing.T) {
 		t.Fatalf("expected '%s', got %s", tokenSymbol, v)
 	}
 
-	v, err = store.ReadEntry(ctx, testutil.AliceSession, common.DATA_ACTIVE_BAL)
+	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_BAL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +118,7 @@ func TestTokenTransfer(t *testing.T) {
 		t.Fatalf("expected '%d', got %s", tokenBalance, v)
 	}
 
-	v, err = store.ReadEntry(ctx, testutil.AliceSession, common.DATA_TRANSACTIONS)
+	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_TRANSACTIONS)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -133,8 +136,6 @@ func TestTokenTransfer(t *testing.T) {
 	if !bytes.Contains(v, []byte(fmt.Sprintf("1:%s", tokenSymbol))) {
 		t.Fatalf("expected '1:%s', got %s", tokenSymbol, v)
 	}
-
-
 }
 
 func TestTokenMint(t *testing.T) {
@@ -159,7 +160,8 @@ func TestTokenMint(t *testing.T) {
 	api.VoucherDataContent = &models.VoucherDataResult{
 		TokenSymbol: tokenSymbol,
 		TokenName: tokenName,
-		TokenDecimals: strconv.Itoa(tokenDecimals),
+		//TokenDecimals: strconv.Itoa(tokenDecimals),
+		TokenDecimals: tokenDecimals,
 		SinkAddress: sinkAddress,
 	}
 	api.VouchersContent = []dataserviceapi.TokenHoldings{
@@ -179,18 +181,18 @@ func TestTokenMint(t *testing.T) {
 		panic(err)
 	}
 
-	alice, err := common.NormalizeHex(testutil.AliceChecksum)
+	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	userDb.SetSession(alice)
 	userDb.SetPrefix(db.DATATYPE_USERDATA)
-	err = userDb.Put(ctx, common.PackKey(common.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
+	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
 	if err != nil {
 		t.Fatal(err)
 	}
-	store := common.UserDataStore{
+	userStore := store.UserDataStore{
 		Db: userDb,
 	}
 
@@ -198,12 +200,12 @@ func TestTokenMint(t *testing.T) {
 		To: testutil.AliceChecksum,
 		Value: txValue,
 	}
-	err = handleTokenMint(ctx, &store, ev)
+	err = handleTokenMint(ctx, &userStore, ev)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	v, err := store.ReadEntry(ctx, testutil.AliceSession, common.DATA_ACTIVE_SYM)
+	v, err := userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_SYM)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -211,7 +213,7 @@ func TestTokenMint(t *testing.T) {
 		t.Fatalf("expected '%s', got %s", tokenSymbol, v)
 	}
 
-	v, err = store.ReadEntry(ctx, testutil.AliceSession, common.DATA_ACTIVE_BAL)
+	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_BAL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -219,7 +221,7 @@ func TestTokenMint(t *testing.T) {
 		t.Fatalf("expected '%d', got %s", tokenBalance, v)
 	}
 
-	v, err = store.ReadEntry(ctx, testutil.AliceSession, common.DATA_TRANSACTIONS)
+	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_TRANSACTIONS)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -237,5 +239,4 @@ func TestTokenMint(t *testing.T) {
 	if !bytes.Contains(v, []byte(fmt.Sprintf("1:%s", tokenSymbol))) {
 		t.Fatalf("expected '1:%s', got %s", tokenSymbol, v)
 	}
-
 }

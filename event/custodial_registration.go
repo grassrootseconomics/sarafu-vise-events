@@ -6,8 +6,8 @@ import (
 	geEvent "github.com/grassrootseconomics/eth-tracker/pkg/event"
 
 	"git.defalsify.org/vise.git/persist"
-	"git.grassecon.net/urdt/ussd/common"
-	"git.grassecon.net/term/lookup"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
 )
 
 const (
@@ -41,8 +41,8 @@ func asCustodialRegistrationEvent(gev *geEvent.Event) (*eventCustodialRegistrati
 // TODO: implement account created in userstore instead, so that
 // the need for persister and state use here is eliminated (it
 // introduces concurrency risks)
-func handleCustodialRegistration(ctx context.Context, store *common.UserDataStore, pr *persist.Persister, ev *eventCustodialRegistration) error {
-	identity, err := lookup.IdentityFromAddress(ctx, store, ev.Account)
+func handleCustodialRegistration(ctx context.Context, userStore *store.UserDataStore, pr *persist.Persister, ev *eventCustodialRegistration) error {
+	identity, err := lookup.IdentityFromAddress(ctx, userStore, ev.Account)
 	if err != nil {
 		return err
 	}
