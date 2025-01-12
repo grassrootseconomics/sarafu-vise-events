@@ -19,9 +19,9 @@ import (
 	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
 	"git.grassecon.net/grassrootseconomics/sarafu-api/models"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
-//	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event"
 	"git.grassecon.net/grassrootseconomics/common/hex"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/application"
 )
 
 const (
@@ -198,6 +198,20 @@ func TestHandleMsg(t *testing.T) {
 		t.Fatal("no transaction data")
 	}
 
+
+	mh, err := application.NewMenuHandlers(nil, userStore, nil, nil, testutil.ReplaceSeparatorFunc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx = context.WithValue(ctx, "SessionId", testutil.AliceSession)
+	rrs, err := mh.GetVoucherList(ctx, "", []byte{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	expect = fmt.Sprintf("1:%s", tokenSymbol)
+	if rrs.Content != expect {
+		t.Fatalf("expected '%v', got '%v'", expect, rrs.Content)
+	}
 //	userDb.SetPrefix(event.DATATYPE_USERSUB)
 //	userDb.SetSession(testutil.AliceSession)
 //	k := append([]byte("vouchers"), []byte("sym")...)

@@ -33,7 +33,9 @@ const (
 	txTimestamp = 1730592500
 	txHash = "0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
 	sinkAddress = "0xb42C5920014eE152F2225285219407938469BBfA"
+	bogusSym = "/-21380u"
 )
+
 
 func TestTokenTransfer(t *testing.T) {
 	err := config.LoadConfig()
@@ -131,22 +133,19 @@ func TestTokenTransfer(t *testing.T) {
 		t.Fatal("no transaction data")
 	}
 
-	mh, err := application.NewMenuHandlers(nil, userStore, nil, nil, nil)
+	mh, err := application.NewMenuHandlers(nil, userStore, nil, nil, testutil.ReplaceSeparatorFunc)
 	if err != nil {
 		t.Fatal(err)
 	}
-	_ = mh
-
-//	userDb.SetPrefix(DATATYPE_USERSUB)
-//	userDb.SetSession(testutil.AliceSession)
-//	k := append([]byte("vouchers"), []byte("sym")...)
-//	v, err = userDb.Get(ctx, k)
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	if !bytes.Contains(v, []byte(fmt.Sprintf("1:%s", tokenSymbol))) {
-//		t.Fatalf("expected '1:%s', got %s", tokenSymbol, v)
-//	}
+	ctx = context.WithValue(ctx, "SessionId", testutil.AliceSession)
+	rrs, err := mh.GetVoucherList(ctx, "", []byte{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	expect = fmt.Sprintf("1:%s", tokenSymbol)
+	if rrs.Content != expect {
+		t.Fatalf("expected '%v', got '%v'", expect, rrs.Content)
+	}
 }
 
 func TestTokenMint(t *testing.T) {
@@ -243,14 +242,18 @@ func TestTokenMint(t *testing.T) {
 		t.Fatal("no transaction data")
 	}
 
-//	userDb.SetPrefix(DATATYPE_USERSUB)
-//	userDb.SetSession(testutil.AliceSession)
-//	k := append([]byte("vouchers"), []byte("sym")...)
-//	v, err = userDb.Get(ctx, k)
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	if !bytes.Contains(v, []byte(fmt.Sprintf("1:%s", tokenSymbol))) {
-//		t.Fatalf("expected '1:%s', got %s", tokenSymbol, v)
-//	}
+
+	mh, err := application.NewMenuHandlers(nil, userStore, nil, nil, testutil.ReplaceSeparatorFunc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx = context.WithValue(ctx, "SessionId", testutil.AliceSession)
+	rrs, err := mh.GetVoucherList(ctx, "", []byte{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	expect = fmt.Sprintf("1:%s", tokenSymbol)
+	if rrs.Content != expect {
+		t.Fatalf("expected '%v', got '%v'", expect, rrs.Content)
+	}
 }

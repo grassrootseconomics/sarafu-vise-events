@@ -75,36 +75,26 @@ func updateTokenList(ctx context.Context, userStore *store.UserDataStore, identi
 
 	// TODO: make sure subprefixdb is thread safe when using gdbm
 	// TODO: why is address session here unless explicitly set
-	//userStore.Db.SetPrefix(DATATYPE_USERSUB)
 	pfxDb := toPrefixDb(userStore, identity.SessionId)
 
-	//k := append([]byte("vouchers"), []byte("sym")...)
-	//err = userStore.Db.Put(ctx, k, []byte(metadata.Symbols))
 	typ := storedb.ToBytes(storedb.DATA_VOUCHER_SYMBOLS)
 	err = pfxDb.Put(ctx, typ, []byte(metadata.Symbols))
 	if err != nil {
 		return err
 	}
 
-
-	//k = append([]byte("vouchers"), []byte("bal")...)
-	//err = userStore.Db.Put(ctx, k, []byte(metadata.Balances))
 	typ = storedb.ToBytes(storedb.DATA_VOUCHER_BALANCES)
 	err = pfxDb.Put(ctx, typ, []byte(metadata.Balances))
 	if err != nil {
 		return err
 	}
 
-	//k = append([]byte("vouchers"), []byte("deci")...)
-	//err = userStore.Db.Put(ctx, k, []byte(metadata.Decimals))
 	typ = storedb.ToBytes(storedb.DATA_VOUCHER_DECIMALS)
 	err = pfxDb.Put(ctx, typ, []byte(metadata.Decimals))
 	if err != nil {
 		return err
 	}
 
-	//k = append([]byte("vouchers"), []byte("addr")...)
-	//err = userStore.Db.Put(ctx, k, []byte(metadata.Addresses))
 	typ = storedb.ToBytes(storedb.DATA_VOUCHER_ADDRESSES)
 	err = pfxDb.Put(ctx, typ, []byte(metadata.Addresses))
 	if err != nil {
@@ -116,7 +106,6 @@ func updateTokenList(ctx context.Context, userStore *store.UserDataStore, identi
 
 // set default token to given symbol.
 func updateDefaultToken(ctx context.Context, userStore *store.UserDataStore, identity lookup.Identity, activeSym string) error {
-	//pfxDb := store.StoreToPrefixDb(userStore, []byte("vouchers"))
 	pfxDb := toPrefixDb(userStore, identity.SessionId)
 	// TODO: the activeSym input should instead be newline separated list?
 	tokenData, err := store.GetVoucherData(ctx, pfxDb, activeSym)
