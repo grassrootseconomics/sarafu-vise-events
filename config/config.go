@@ -2,6 +2,7 @@ package config
 
 import (
 	viseconfig "git.grassecon.net/grassrootseconomics/visedriver/config"
+	apiconfig "git.grassecon.net/grassrootseconomics/sarafu-api/config"
 	"git.grassecon.net/grassrootseconomics/visedriver/env"
 )
 
@@ -20,7 +21,10 @@ func LoadConfig() error {
 	if err != nil {
 		return err
 	}
-
+	err = apiconfig.LoadConfig()
+	if err != nil {
+		return err
+	}
 	JetstreamURL = env.GetEnv("NATS_JETSTREAM_URL", defaultJetstreamURL)
 	JetstreamClientName = env.GetEnv("NATS_JETSTREAM_CLIENT_NAME", defaultJetstreamClientName)
 	return nil
@@ -28,4 +32,8 @@ func LoadConfig() error {
 
 func DbConn() string {
 	return viseconfig.DbConn
+}
+
+func Language() string {
+	return viseconfig.DefaultLanguage
 }
