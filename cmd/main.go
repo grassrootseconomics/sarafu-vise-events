@@ -12,6 +12,8 @@ import (
 	"git.grassecon.net/grassrootseconomics/visedriver/storage"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event/nats"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
+	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 )
 
 var (
@@ -41,7 +43,8 @@ func main() {
 
 	menuStorageService := storage.NewMenuStorageService(connData, "")
 
-	n := nats.NewNatsSubscription(menuStorageService)
+	eh := viseevent.NewEventsHandler(lookup.Api)
+	n := nats.NewNatsSubscription(menuStorageService, eh)
 	err = n.Connect(ctx, config.JetstreamURL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Stream connect err: %v", err)

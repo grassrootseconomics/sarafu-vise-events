@@ -9,6 +9,7 @@ import (
 	"git.defalsify.org/vise.git/logging"
 	"git.grassecon.net/grassrootseconomics/visedriver/storage"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
+	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 )
 
 var (
@@ -17,7 +18,15 @@ var (
 
 // Router is responsible for invoking handlers corresponding to events.
 type Router struct {
-	Store storage.StorageService
+	store storage.StorageService
+	handler *viseevent.EventsHandler
+}
+
+func NewRouter(store storage.StorageService, handler *viseevent.EventsHandler) *Router {
+	return &Router{
+		store: store,
+		handler: handler,
+	}
 }
 
 // Route parses an event from the event stream, and resolves the handler
@@ -27,7 +36,7 @@ type Router struct {
 // handler fails to successfully execute.
 func(r *Router) Route(ctx context.Context, gev *geEvent.Event) error {
 	logg.DebugCtxf(ctx, "have event", "ev", gev)
-	userDb, err := r.Store.GetUserdataDb(ctx)
+	userDb, err := r.store.GetUserdataDb(ctx)
 	if err != nil {
 		return err
 	}
@@ -36,15 +45,15 @@ func(r *Router) Route(ctx context.Context, gev *geEvent.Event) error {
 	}
 	evCC, ok := asCustodialRegistrationEvent(gev)
 	if ok {
-		pr, err := r.Store.GetPersister(ctx)
+		pr, err := r.store.GetPersister(ctx)
 		if err != nil {
 			return err
 		}
-		return handleCustodialRegistration(ctx, userStore, pr, evCC)
+		return r.handler.HandleCustodialRegistration(ctx, userStore, pr, evCC)
 	}
 	evTT, ok := asTokenTransferEvent(gev)
 	if ok {
-		return handleTokenTransfer(ctx, userStore, evTT)
+		return r.handler.HandleTokenTransfer(ctx, userStore, evTT)
 	}
 
 	return fmt.Errorf("unexpected message")

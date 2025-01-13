@@ -9,11 +9,14 @@ import (
 	"git.defalsify.org/vise.git/persist"
 	"git.defalsify.org/vise.git/state"
 	"git.defalsify.org/vise.git/cache"
+	"git.grassecon.net/grassrootseconomics/sarafu-api/remote/http"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/common/hex"
 	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
+	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
+	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 )
 
 func TestCustodialRegistration(t *testing.T) {
@@ -53,10 +56,13 @@ func TestCustodialRegistration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ev := &eventCustodialRegistration{
+	ev := &apievent.EventCustodialRegistration{
 		Account: testutil.AliceChecksum,
 	}
-	err = handleCustodialRegistration(ctx, &store, pr, ev)
+
+	// Use dev service or mock service instead
+	eh := viseevent.NewEventsHandler(&http.HTTPAccountService{})
+	err = eh.HandleCustodialRegistration(ctx, &store, pr, ev)
 	if err != nil {
 		t.Fatal(err)
 	}

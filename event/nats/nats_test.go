@@ -22,6 +22,7 @@ import (
 	"git.grassecon.net/grassrootseconomics/common/hex"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/application"
+	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 )
 
 const (
@@ -125,6 +126,7 @@ func TestHandleMsg(t *testing.T) {
 		},
 	}
 	lookup.Api = api
+	eh := viseevent.NewEventsHandler(api)
 
 	ctx := context.Background()
 	userDb := memdb.NewMemDb()
@@ -148,7 +150,8 @@ func TestHandleMsg(t *testing.T) {
 	storageService := &testutil.TestStorageService{
 		Store: userDb,
 	}
-	sub := NewNatsSubscription(storageService)
+
+	sub := NewNatsSubscription(storageService, eh)
 
 	data := fmt.Sprintf(`{
 	"block": %d,

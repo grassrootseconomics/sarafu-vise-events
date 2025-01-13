@@ -12,6 +12,7 @@ import (
 	"git.grassecon.net/grassrootseconomics/visedriver/storage"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
+	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 )
 
 var (
@@ -22,7 +23,7 @@ var (
 //
 // Extends Router.
 type NatsSubscription struct {
-	event.Router
+	*event.Router
 	ctx context.Context
 	conn *nats.Conn
 	js jetstream.JetStream
@@ -31,11 +32,9 @@ type NatsSubscription struct {
 }
 
 // NewNatsSubscription creates a new NatsSubscription with the given user store.
-func NewNatsSubscription(store storage.StorageService) *NatsSubscription {
+func NewNatsSubscription(store storage.StorageService, handler *viseevent.EventsHandler) *NatsSubscription {
 	return &NatsSubscription{
-		Router: event.Router{
-			Store: store,
-		},
+		Router: event.NewRouter(store, handler),
 	}
 }
 

@@ -20,6 +20,8 @@ import (
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
 	"git.grassecon.net/grassrootseconomics/common/hex"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
+	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
+	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 )
 
 const (
@@ -72,6 +74,7 @@ func TestTokenTransfer(t *testing.T) {
 		},
 	}
 	lookup.Api = api
+	eh := viseevent.NewEventsHandler(api)
 
 	ctx := context.Background()
 	userDb := memdb.NewMemDb()
@@ -96,12 +99,13 @@ func TestTokenTransfer(t *testing.T) {
 		Db: userDb,
 	}
 
-	ev := &eventTokenTransfer{
+	ev := &apievent.EventTokenTransfer{
 		From: testutil.BobChecksum,
 		To: testutil.AliceChecksum,
 		Value: txValue,
 	}
-	err = handleTokenTransfer(ctx, &userStore, ev)
+
+	err = eh.HandleTokenTransfer(ctx, &userStore, ev)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -183,6 +187,7 @@ func TestTokenMint(t *testing.T) {
 		},
 	}
 	lookup.Api = api
+	eh := viseevent.NewEventsHandler(api)
 
 	ctx := context.Background()
 	userDb := memdb.NewMemDb()
@@ -206,11 +211,11 @@ func TestTokenMint(t *testing.T) {
 		Db: userDb,
 	}
 
-	ev := &eventTokenMint{
+	ev := &apievent.EventTokenMint{
 		To: testutil.AliceChecksum,
 		Value: txValue,
 	}
-	err = handleTokenMint(ctx, &userStore, ev)
+	err = eh.HandleTokenMint(ctx, &userStore, ev)
 	if err != nil {
 		t.Fatal(err)
 	}
