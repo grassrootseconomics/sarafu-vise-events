@@ -43,8 +43,9 @@ func main() {
 
 	menuStorageService := storage.NewMenuStorageService(connData, "")
 
-	eh := viseevent.NewEventsHandler(lookup.Api)
-	n := nats.NewNatsSubscription(menuStorageService, eh)
+	eu := viseevent.NewEventsUpdater(lookup.Api, menuStorageService)
+	eh := eu.ToEventsHandler()
+	n := nats.NewNatsSubscription(eh)
 	err = n.Connect(ctx, config.JetstreamURL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Stream connect err: %v", err)

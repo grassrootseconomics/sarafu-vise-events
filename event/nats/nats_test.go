@@ -145,6 +145,7 @@ func TestHandleMsg(t *testing.T) {
 
 	eh := eu.ToEventsHandler()
 	sub := NewNatsSubscription(eh)
+	_ = sub.Connect(ctx, "")
 
 	data := fmt.Sprintf(`{
 	"block": %d,

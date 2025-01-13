@@ -34,11 +34,11 @@ func(r *Router) Route(ctx context.Context, gev *geEvent.Event) error {
 	logg.DebugCtxf(ctx, "have event", "ev", gev)
 	evCC, ok := asCustodialRegistrationEvent(gev)
 	if ok {
-		return r.handler.Handle(ctx, apievent.EventTokenTransferTag, evCC)
+		return r.handler.Handle(ctx, apievent.EventRegistrationTag, evCC)
 	}
 	evTT, ok := asTokenTransferEvent(gev)
 	if ok {
-		return r.handler.Handle(ctx, apievent.EventRegistrationTag, evTT)
+		return r.handler.Handle(ctx, apievent.EventTokenTransferTag, evTT)
 	}
 
 	return fmt.Errorf("unexpected message")

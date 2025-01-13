@@ -46,6 +46,8 @@ func NewNatsSubscription(handler *apievent.EventsHandler) *NatsSubscription {
 func(n *NatsSubscription) Connect(ctx context.Context, connStr string) error {
 	var err error
 
+	// enables set ctx in test, even if the connstr is invalid (js msg handler doesnt take context)
+	n.ctx = ctx
 	n.conn, err = nats.Connect(connStr)
 	if err != nil {
 		return err
@@ -67,7 +69,6 @@ func(n *NatsSubscription) Connect(ctx context.Context, connStr string) error {
 
 	serverInfo := toServerInfo(n.conn)
 	logg.DebugCtxf(ctx, "nats connected, starting consumer", "status", n.conn.Status(), "server", serverInfo)
-	n.ctx = ctx
 	n.cctx, err = n.cs.Consume(n.handleEvent)
 	if err != nil {
 		return err		
