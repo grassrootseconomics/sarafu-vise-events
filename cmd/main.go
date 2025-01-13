@@ -8,9 +8,14 @@ import (
 	"os/signal"
 	"syscall"
 
+	"git.defalsify.org/vise.git/logging"
 	"git.grassecon.net/grassrootseconomics/visedriver/storage"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event/nats"
+)
+
+var (
+	logg          = logging.NewVanilla()
 )
 
 func main() {
@@ -29,6 +34,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "connstr err: %v", err)
 		os.Exit(1)
 	}
+
+	logg.Infof("start command", "conn", connData)
 
 	ctx := context.Background()
 

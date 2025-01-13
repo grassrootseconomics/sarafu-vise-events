@@ -15,7 +15,6 @@ const (
 	defaultJetstreamClientName string = "omnom"
 )
 
-
 func LoadConfig() error {
 	err := viseconfig.LoadConfig()
 	if err != nil {

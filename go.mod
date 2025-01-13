@@ -4,16 +4,17 @@ go 1.23.4
 
 require (
 	git.defalsify.org/vise.git v0.2.3-0.20250103172917-3e190a44568d
-	git.grassecon.net/grassrootseconomics/common v0.0.0-20250112102149-4feac5e490e9
-	git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250112121504-be11eea04bc1
-	git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250112121425-f089822300c5
-	git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250112121325-9e4c65c8b4d1
+	git.grassecon.net/grassrootseconomics/common v0.0.0-20250112155828-b55686e830fd
+	git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250112201720-d80648c7aec3
+	git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250113080019-09e8607b372d
+	git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250112155457-f13dab9a4505
 	github.com/grassrootseconomics/eth-tracker v1.3.0-rc
 	github.com/grassrootseconomics/ussd-data-service v1.2.0-beta
 	github.com/nats-io/nats.go v1.37.0
 )
 
 require (
+	github.com/alecthomas/participle/v2 v2.0.0 // indirect
 	github.com/barbashov/iso639-3 v0.0.0-20211020172741-1f4ffb2d8d1c // indirect
 	github.com/fxamacker/cbor/v2 v2.4.0 // indirect
 	github.com/grassrootseconomics/eth-custodial v1.3.0-beta // indirect
