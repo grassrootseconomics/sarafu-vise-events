@@ -5,9 +5,9 @@ go 1.23.4
 require (
 	git.defalsify.org/vise.git v0.2.3-0.20250103172917-3e190a44568d
 	git.grassecon.net/grassrootseconomics/common v0.0.0-20250113174703-6afccefd1f05
-	git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250113181351-551195543805
-	git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250113181554-0d47c096e0d6
-	git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250113103142-5bf0a0e85893
+	git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250113213645-7c697394b5e7
+	git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250113213915-63eb803022af
+	git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250113213325-5228aef0889b
 	github.com/grassrootseconomics/eth-tracker v1.3.0-rc
 	github.com/grassrootseconomics/ussd-data-service v1.2.0-beta
 	github.com/nats-io/nats.go v1.37.0

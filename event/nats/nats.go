@@ -9,10 +9,9 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	geEvent "github.com/grassrootseconomics/eth-tracker/pkg/event"
 	"git.defalsify.org/vise.git/logging"
-	"git.grassecon.net/grassrootseconomics/visedriver/storage"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
-	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
+	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
 )
 
 var (
@@ -32,9 +31,9 @@ type NatsSubscription struct {
 }
 
 // NewNatsSubscription creates a new NatsSubscription with the given user store.
-func NewNatsSubscription(store storage.StorageService, handler *viseevent.EventsHandler) *NatsSubscription {
+func NewNatsSubscription(handler *apievent.EventsHandler) *NatsSubscription {
 	return &NatsSubscription{
-		Router: event.NewRouter(store, handler),
+		Router: event.NewRouter(handler),
 	}
 }
 

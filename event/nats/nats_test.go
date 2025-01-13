@@ -13,7 +13,6 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
 	"git.defalsify.org/vise.git/db"
-	memdb "git.defalsify.org/vise.git/db/mem"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
 	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
@@ -23,6 +22,7 @@ import (
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/application"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
+	"git.grassecon.net/grassrootseconomics/visedriver/testutil/mocks"
 )
 
 const (
@@ -126,14 +126,10 @@ func TestHandleMsg(t *testing.T) {
 		},
 	}
 	lookup.Api = api
-	eh := viseevent.NewEventsHandler(api)
-
 	ctx := context.Background()
-	userDb := memdb.NewMemDb()
-	err = userDb.Connect(ctx, "")
-	if err != nil {
-		panic(err)
-	}
+	storageService := mocks.NewMemStorageService(ctx)
+	eu := viseevent.NewEventsUpdater(api, storageService)
+	userDb := storageService.Db
 
 	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
 	if err != nil {
@@ -147,11 +143,8 @@ func TestHandleMsg(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	storageService := &testutil.TestStorageService{
-		Store: userDb,
-	}
-
-	sub := NewNatsSubscription(storageService, eh)
+	eh := eu.ToEventsHandler()
+	sub := NewNatsSubscription(eh)
 
 	data := fmt.Sprintf(`{
 	"block": %d,

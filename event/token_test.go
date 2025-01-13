@@ -11,7 +11,6 @@ import (
 
 	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
 	"git.defalsify.org/vise.git/db"
-	memdb "git.defalsify.org/vise.git/db/mem"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/application"
 	"git.grassecon.net/grassrootseconomics/sarafu-api/models"
@@ -22,6 +21,7 @@ import (
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
+	"git.grassecon.net/grassrootseconomics/visedriver/testutil/mocks"
 )
 
 const (
@@ -74,14 +74,11 @@ func TestTokenTransfer(t *testing.T) {
 		},
 	}
 	lookup.Api = api
-	eh := viseevent.NewEventsHandler(api)
 
 	ctx := context.Background()
-	userDb := memdb.NewMemDb()
-	err = userDb.Connect(ctx, "")
-	if err != nil {
-		panic(err)
-	}
+	storageService := mocks.NewMemStorageService(ctx)
+	eu := viseevent.NewEventsUpdater(api, storageService)
+	userDb := storageService.Db
 
 	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
 	if err != nil {
@@ -105,7 +102,8 @@ func TestTokenTransfer(t *testing.T) {
 		Value: txValue,
 	}
 
-	err = eh.HandleTokenTransfer(ctx, &userStore, ev)
+	eh := eu.ToEventsHandler()
+	err = eh.Handle(ctx, apievent.EventTokenTransferTag, ev)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -187,14 +185,12 @@ func TestTokenMint(t *testing.T) {
 		},
 	}
 	lookup.Api = api
-	eh := viseevent.NewEventsHandler(api)
+
 
 	ctx := context.Background()
-	userDb := memdb.NewMemDb()
-	err = userDb.Connect(ctx, "")
-	if err != nil {
-		panic(err)
-	}
+	storageService := mocks.NewMemStorageService(ctx)
+	eu := viseevent.NewEventsUpdater(api, storageService)
+	userDb := storageService.Db
 
 	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
 	if err != nil {
@@ -215,7 +211,9 @@ func TestTokenMint(t *testing.T) {
 		To: testutil.AliceChecksum,
 		Value: txValue,
 	}
-	err = eh.HandleTokenMint(ctx, &userStore, ev)
+
+	eh := eu.ToEventsHandler()
+	err = eh.Handle(ctx, apievent.EventTokenMintTag, ev)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -246,7 +244,6 @@ func TestTokenMint(t *testing.T) {
 	if !bytes.Contains(v, []byte("abcdef")) {
 		t.Fatal("no transaction data")
 	}
-
 
 	mh, err := application.NewMenuHandlers(nil, userStore, nil, nil, testutil.ReplaceSeparatorFunc)
 	if err != nil {

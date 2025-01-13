@@ -4,20 +4,19 @@ import (
 	"context"
 	"testing"
 
-	memdb "git.defalsify.org/vise.git/db/mem"
 	"git.defalsify.org/vise.git/db"
-	"git.defalsify.org/vise.git/persist"
 	"git.defalsify.org/vise.git/state"
 	"git.defalsify.org/vise.git/cache"
+	"git.grassecon.net/grassrootseconomics/visedriver/testutil/mocks"
 	"git.grassecon.net/grassrootseconomics/sarafu-api/remote/http"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/common/hex"
 	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 )
+
 
 func TestCustodialRegistration(t *testing.T) {
 	err := config.LoadConfig()
@@ -26,11 +25,8 @@ func TestCustodialRegistration(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	userDb := memdb.NewMemDb()
-	err = userDb.Connect(ctx, "")
-	if err != nil {
-		panic(err)
-	}
+	storageService := mocks.NewMemStorageService(ctx)
+	userDb := storageService.Db
 
 	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
 	if err != nil {
@@ -43,13 +39,10 @@ func TestCustodialRegistration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	store := store.UserDataStore{
-		Db: userDb,
-	}
 
 	st := state.NewState(248)
 	ca := cache.NewCache()
-	pr := persist.NewPersister(userDb)
+	pr, _ := storageService.GetPersister(ctx)
 	pr = pr.WithContent(st, ca)
 	err = pr.Save(testutil.AliceSession)
 	if err != nil {
@@ -61,8 +54,9 @@ func TestCustodialRegistration(t *testing.T) {
 	}
 
 	// Use dev service or mock service instead
-	eh := viseevent.NewEventsHandler(&http.HTTPAccountService{})
-	err = eh.HandleCustodialRegistration(ctx, &store, pr, ev)
+	eu := viseevent.NewEventsUpdater(&http.HTTPAccountService{}, storageService)
+	eh := eu.ToEventsHandler()
+	err = eh.Handle(ctx, apievent.EventRegistrationTag, ev)
 	if err != nil {
 		t.Fatal(err)
 	}
