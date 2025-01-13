@@ -21,7 +21,7 @@ func main() {
 	flag.StringVar(&connStr, "c", "", "connection string")
 	flag.Parse()
 
-	if connStr != "" {
+	if connStr == "" {
 		connStr = config.DbConn()
 	}
 	connData, err := storage.ToConnData(connStr)

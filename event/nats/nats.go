@@ -92,7 +92,7 @@ func(n *NatsSubscription) Close() error {
 func(n *NatsSubscription) handleEvent(m jetstream.Msg) {
 	var ev geEvent.Event
 
-	logg.DebugCtxf(n.ctx, "have msg", "err", m)
+	logg.DebugCtxf(n.ctx, "have msg", "msg", m)
 	b := m.Data()
 	err := json.Unmarshal(b, &ev)
 	if err != nil {
