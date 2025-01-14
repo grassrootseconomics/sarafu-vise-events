@@ -12,8 +12,8 @@ import (
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/common/hex"
 	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
+	apimocks "git.grassecon.net/grassrootseconomics/sarafu-api/testutil/mocks"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 )
 
@@ -28,14 +28,14 @@ func TestCustodialRegistration(t *testing.T) {
 	storageService := mocks.NewMemStorageService(ctx)
 	userDb := storageService.Db
 
-	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
+	alice, err := hex.NormalizeHex(apimocks.AliceChecksum)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	userDb.SetSession(alice)
 	userDb.SetPrefix(db.DATATYPE_USERDATA)
-	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
+	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(apimocks.AliceSession))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,13 +44,13 @@ func TestCustodialRegistration(t *testing.T) {
 	ca := cache.NewCache()
 	pr, _ := storageService.GetPersister(ctx)
 	pr = pr.WithContent(st, ca)
-	err = pr.Save(testutil.AliceSession)
+	err = pr.Save(apimocks.AliceSession)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	ev := &apievent.EventCustodialRegistration{
-		Account: testutil.AliceChecksum,
+		Account: apimocks.AliceChecksum,
 	}
 
 	// Use dev service or mock service instead

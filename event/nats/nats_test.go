@@ -19,6 +19,7 @@ import (
 	"git.grassecon.net/grassrootseconomics/sarafu-api/models"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
 	"git.grassecon.net/grassrootseconomics/common/hex"
+	apimocks "git.grassecon.net/grassrootseconomics/sarafu-api/testutil/mocks"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/application"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
@@ -97,11 +98,11 @@ func TestHandleMsg(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	api := &testutil.MockApi{}
+	api := &apimocks.MockApi{}
 	api.TransactionsContent = []dataserviceapi.Last10TxResponse{
 		dataserviceapi.Last10TxResponse{
-			Sender: testutil.AliceChecksum,
-			Recipient: testutil.BobChecksum,
+			Sender: apimocks.AliceChecksum,
+			Recipient: apimocks.BobChecksum,
 			TransferValue: strconv.Itoa(txValue),
 			ContractAddress: tokenAddress,
 			TxHash: txHash,
@@ -131,14 +132,14 @@ func TestHandleMsg(t *testing.T) {
 	eu := viseevent.NewEventsUpdater(api, storageService)
 	userDb := storageService.Db
 
-	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
+	alice, err := hex.NormalizeHex(apimocks.AliceChecksum)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	userDb.SetSession(alice)
 	userDb.SetPrefix(db.DATATYPE_USERDATA)
-	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
+	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(apimocks.AliceSession))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -159,7 +160,7 @@ func TestHandleMsg(t *testing.T) {
 		"to": "%s",
 		"value": "%d"
 	}
-}`, txBlock, tokenAddress, txTimestamp, txHash, testutil.AliceChecksum, testutil.BobChecksum, txValue)
+}`, txBlock, tokenAddress, txTimestamp, txHash, apimocks.AliceChecksum, apimocks.BobChecksum, txValue)
 	msg := &testMsg{
 		data: []byte(data),
 	}
@@ -168,7 +169,7 @@ func TestHandleMsg(t *testing.T) {
 	userStore := store.UserDataStore{
 		Db: userDb,
 	}
-	v, err := userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_SYM)
+	v, err := userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_ACTIVE_SYM)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -176,7 +177,7 @@ func TestHandleMsg(t *testing.T) {
 		t.Fatalf("expected '%s', got %s", tokenSymbol, v)
 	}
 
-	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_BAL)
+	v, err = userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_ACTIVE_BAL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -187,7 +188,7 @@ func TestHandleMsg(t *testing.T) {
 		t.Fatalf("expected '%d', got %s", tokenBalance, v)
 	}
 
-	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_TRANSACTIONS)
+	v, err = userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_TRANSACTIONS)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -200,7 +201,7 @@ func TestHandleMsg(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx = context.WithValue(ctx, "SessionId", testutil.AliceSession)
+	ctx = context.WithValue(ctx, "SessionId", apimocks.AliceSession)
 	rrs, err := mh.GetVoucherList(ctx, "", []byte{})
 	if err != nil {
 		t.Fatal(err)
@@ -210,7 +211,7 @@ func TestHandleMsg(t *testing.T) {
 		t.Fatalf("expected '%v', got '%v'", expect, rrs.Content)
 	}
 //	userDb.SetPrefix(event.DATATYPE_USERSUB)
-//	userDb.SetSession(testutil.AliceSession)
+//	userDb.SetSession(apimocks.AliceSession)
 //	k := append([]byte("vouchers"), []byte("sym")...)
 //	v, err = userDb.Get(ctx, k)
 //	if err != nil {

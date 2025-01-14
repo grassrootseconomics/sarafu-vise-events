@@ -20,6 +20,7 @@ import (
 	"git.grassecon.net/grassrootseconomics/common/hex"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
 	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
+	apimocks "git.grassecon.net/grassrootseconomics/sarafu-api/testutil/mocks"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 	"git.grassecon.net/grassrootseconomics/visedriver/testutil/mocks"
 )
@@ -45,11 +46,11 @@ func TestTokenTransfer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	api := &testutil.MockApi{}
+	api := &apimocks.MockApi{}
 	api.TransactionsContent = []dataserviceapi.Last10TxResponse{
 		dataserviceapi.Last10TxResponse{
-			Sender: testutil.AliceChecksum,
-			Recipient: testutil.BobChecksum,
+			Sender: apimocks.AliceChecksum,
+			Recipient: apimocks.BobChecksum,
 			TransferValue: strconv.Itoa(txValue),
 			ContractAddress: tokenAddress,
 			TxHash: txHash,
@@ -80,7 +81,7 @@ func TestTokenTransfer(t *testing.T) {
 	eu := viseevent.NewEventsUpdater(api, storageService)
 	userDb := storageService.Db
 
-	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
+	alice, err := hex.NormalizeHex(apimocks.AliceChecksum)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,7 +89,7 @@ func TestTokenTransfer(t *testing.T) {
 	// TODO: deduplicate test setup
 	userDb.SetSession(alice)
 	userDb.SetPrefix(db.DATATYPE_USERDATA)
-	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
+	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(apimocks.AliceSession))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -97,8 +98,8 @@ func TestTokenTransfer(t *testing.T) {
 	}
 
 	ev := &apievent.EventTokenTransfer{
-		From: testutil.BobChecksum,
-		To: testutil.AliceChecksum,
+		From: apimocks.BobChecksum,
+		To: apimocks.AliceChecksum,
 		Value: txValue,
 	}
 
@@ -108,7 +109,7 @@ func TestTokenTransfer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	v, err := userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_SYM)
+	v, err := userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_ACTIVE_SYM)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -116,7 +117,7 @@ func TestTokenTransfer(t *testing.T) {
 		t.Fatalf("expected '%s', got %s", tokenSymbol, v)
 	}
 
-	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_BAL)
+	v, err = userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_ACTIVE_BAL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,7 +128,7 @@ func TestTokenTransfer(t *testing.T) {
 		t.Fatalf("expected '%s', got %s", expect, v)
 	}
 
-	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_TRANSACTIONS)
+	v, err = userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_TRANSACTIONS)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -139,7 +140,7 @@ func TestTokenTransfer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx = context.WithValue(ctx, "SessionId", testutil.AliceSession)
+	ctx = context.WithValue(ctx, "SessionId", apimocks.AliceSession)
 	rrs, err := mh.GetVoucherList(ctx, "", []byte{})
 	if err != nil {
 		t.Fatal(err)
@@ -156,11 +157,11 @@ func TestTokenMint(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	api := &testutil.MockApi{}
+	api := &apimocks.MockApi{}
 	api.TransactionsContent = []dataserviceapi.Last10TxResponse{
 		dataserviceapi.Last10TxResponse{
-			Sender: testutil.AliceChecksum,
-			Recipient: testutil.BobChecksum,
+			Sender: apimocks.AliceChecksum,
+			Recipient: apimocks.BobChecksum,
 			TransferValue: strconv.Itoa(txValue),
 			ContractAddress: tokenAddress,
 			TxHash: txHash,
@@ -192,14 +193,14 @@ func TestTokenMint(t *testing.T) {
 	eu := viseevent.NewEventsUpdater(api, storageService)
 	userDb := storageService.Db
 
-	alice, err := hex.NormalizeHex(testutil.AliceChecksum)
+	alice, err := hex.NormalizeHex(apimocks.AliceChecksum)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	userDb.SetSession(alice)
 	userDb.SetPrefix(db.DATATYPE_USERDATA)
-	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(testutil.AliceSession))
+	err = userDb.Put(ctx, storedb.PackKey(storedb.DATA_PUBLIC_KEY_REVERSE, []byte{}), []byte(apimocks.AliceSession))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -208,7 +209,7 @@ func TestTokenMint(t *testing.T) {
 	}
 
 	ev := &apievent.EventTokenMint{
-		To: testutil.AliceChecksum,
+		To: apimocks.AliceChecksum,
 		Value: txValue,
 	}
 
@@ -218,7 +219,7 @@ func TestTokenMint(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	v, err := userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_SYM)
+	v, err := userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_ACTIVE_SYM)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -226,7 +227,7 @@ func TestTokenMint(t *testing.T) {
 		t.Fatalf("expected '%s', got %s", tokenSymbol, v)
 	}
 
-	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_ACTIVE_BAL)
+	v, err = userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_ACTIVE_BAL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -237,7 +238,7 @@ func TestTokenMint(t *testing.T) {
 		t.Fatalf("expected '%d', got %s", tokenBalance, v)
 	}
 
-	v, err = userStore.ReadEntry(ctx, testutil.AliceSession, storedb.DATA_TRANSACTIONS)
+	v, err = userStore.ReadEntry(ctx, apimocks.AliceSession, storedb.DATA_TRANSACTIONS)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -249,7 +250,7 @@ func TestTokenMint(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx = context.WithValue(ctx, "SessionId", testutil.AliceSession)
+	ctx = context.WithValue(ctx, "SessionId", apimocks.AliceSession)
 	rrs, err := mh.GetVoucherList(ctx, "", []byte{})
 	if err != nil {
 		t.Fatal(err)
