@@ -3,12 +3,15 @@ package config
 import (
 	viseconfig "git.grassecon.net/grassrootseconomics/visedriver/config"
 	apiconfig "git.grassecon.net/grassrootseconomics/sarafu-api/config"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/config"
 	"git.grassecon.net/grassrootseconomics/visedriver/env"
 )
 
 var (
 	JetstreamURL string
 	JetstreamClientName string
+	Apply = config.Apply
+	GetConns = config.GetConns
 )
 
 const (
@@ -30,10 +33,10 @@ func LoadConfig() error {
 	return nil
 }
 
-func DbConn() string {
-	return viseconfig.DbConn
-}
-
 func Language() string {
 	return viseconfig.DefaultLanguage
+}
+
+func NewOverride() config.Override {
+	return config.Override{}
 }

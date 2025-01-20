@@ -197,7 +197,7 @@ func TestHandleMsg(t *testing.T) {
 	}
 
 
-	mh, err := application.NewMenuHandlers(nil, userStore, nil, nil, testutil.ReplaceSeparatorFunc)
+	mh, err := application.NewMenuHandlers(nil, userStore, nil, testutil.ReplaceSeparatorFunc)
 	if err != nil {
 		t.Fatal(err)
 	}

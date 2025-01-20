@@ -136,7 +136,7 @@ func TestTokenTransfer(t *testing.T) {
 		t.Fatal("no transaction data")
 	}
 
-	mh, err := application.NewMenuHandlers(nil, userStore, nil, nil, testutil.ReplaceSeparatorFunc)
+	mh, err := application.NewMenuHandlers(nil, userStore, nil, testutil.ReplaceSeparatorFunc)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -246,7 +246,7 @@ func TestTokenMint(t *testing.T) {
 		t.Fatal("no transaction data")
 	}
 
-	mh, err := application.NewMenuHandlers(nil, userStore, nil, nil, testutil.ReplaceSeparatorFunc)
+	mh, err := application.NewMenuHandlers(nil, userStore, nil, testutil.ReplaceSeparatorFunc)
 	if err != nil {
 		t.Fatal(err)
 	}
