@@ -4,10 +4,10 @@ go 1.23.4
 
 require (
 	git.defalsify.org/vise.git v0.2.3-0.20250120121301-10739fb4a8c9
-	git.grassecon.net/grassrootseconomics/common v0.0.0-20250113174703-6afccefd1f05
-	git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250115072214-bca7c5de969f
-	git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250120123702-b31011b39058
-	git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250120123120-90ecec17987c
+	git.grassecon.net/grassrootseconomics/common v0.0.0-20250121134736-ba8cbbccea7d
+	git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250121135150-e0b539809805
+	git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250121142648-4baacb325d2b
+	git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250121134912-f7d31e4e8162
 	github.com/grassrootseconomics/eth-tracker v1.3.0-rc
 	github.com/grassrootseconomics/ussd-data-service v1.2.0-beta
 	github.com/nats-io/nats.go v1.37.0
@@ -18,6 +18,7 @@ require (
 	github.com/barbashov/iso639-3 v0.0.0-20211020172741-1f4ffb2d8d1c // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fxamacker/cbor/v2 v2.4.0 // indirect
+	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/grassrootseconomics/eth-custodial v1.3.0-beta // indirect
 	github.com/graygnuorg/go-gdbm v0.0.0-20220711140707-71387d66dce4 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
