@@ -1,8 +1,8 @@
 package lookup
 
 import (
-	"git.grassecon.net/grassrootseconomics/sarafu-api/remote/http"
 	"git.grassecon.net/grassrootseconomics/sarafu-api/remote"
+	"git.grassecon.net/grassrootseconomics/sarafu-api/remote/http"
 )
 
 var (

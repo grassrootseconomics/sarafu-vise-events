@@ -4,19 +4,18 @@ import (
 	"context"
 	"testing"
 
+	"git.defalsify.org/vise.git/cache"
 	"git.defalsify.org/vise.git/db"
 	"git.defalsify.org/vise.git/state"
-	"git.defalsify.org/vise.git/cache"
-	"git.grassecon.net/grassrootseconomics/visedriver/testutil/mocks"
-	"git.grassecon.net/grassrootseconomics/sarafu-api/remote/http"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/common/hex"
-	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
 	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
+	"git.grassecon.net/grassrootseconomics/sarafu-api/remote/http"
 	apimocks "git.grassecon.net/grassrootseconomics/sarafu-api/testutil/mocks"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
+	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
+	"git.grassecon.net/grassrootseconomics/visedriver/testutil/mocks"
 )
-
 
 func TestCustodialRegistration(t *testing.T) {
 	err := config.LoadConfig()

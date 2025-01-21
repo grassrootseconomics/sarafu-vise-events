@@ -30,7 +30,7 @@ func NewRouter(handler *apievent.EventsHandler) *Router {
 //
 // An error will be returned if no handler can be found, or if the resolved
 // handler fails to successfully execute.
-func(r *Router) Route(ctx context.Context, gev *geEvent.Event) error {
+func (r *Router) Route(ctx context.Context, gev *geEvent.Event) error {
 	logg.DebugCtxf(ctx, "have event", "ev", gev)
 	evCC, ok := asCustodialRegistrationEvent(gev)
 	if ok {

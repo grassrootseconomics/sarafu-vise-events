@@ -9,36 +9,35 @@ import (
 	"testing"
 	"time"
 
-	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
 	"git.defalsify.org/vise.git/db"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/application"
+	"git.grassecon.net/grassrootseconomics/common/hex"
+	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
 	"git.grassecon.net/grassrootseconomics/sarafu-api/models"
+	apimocks "git.grassecon.net/grassrootseconomics/sarafu-api/testutil/mocks"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/application"
+	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
 	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
-	"git.grassecon.net/grassrootseconomics/common/hex"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
-	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
-	apimocks "git.grassecon.net/grassrootseconomics/sarafu-api/testutil/mocks"
-	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
 	"git.grassecon.net/grassrootseconomics/visedriver/testutil/mocks"
+	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
 )
 
 const (
-	txBlock = 42
-	tokenAddress = "0x765DE816845861e75A25fCA122bb6898B8B1282a"
-	tokenSymbol = "FOO"
-	tokenName = "Foo Token"
+	txBlock       = 42
+	tokenAddress  = "0x765DE816845861e75A25fCA122bb6898B8B1282a"
+	tokenSymbol   = "FOO"
+	tokenName     = "Foo Token"
 	tokenDecimals = 6
-	txValue = 1337
-	tokenBalance = 362436
-	txTimestamp = 1730592500
-	txHash = "0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
-	sinkAddress = "0xb42C5920014eE152F2225285219407938469BBfA"
-	bogusSym = "/-21380u"
+	txValue       = 1337
+	tokenBalance  = 362436
+	txTimestamp   = 1730592500
+	txHash        = "0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
+	sinkAddress   = "0xb42C5920014eE152F2225285219407938469BBfA"
+	bogusSym      = "/-21380u"
 )
-
 
 func TestTokenTransfer(t *testing.T) {
 	err := config.LoadConfig()
@@ -49,29 +48,29 @@ func TestTokenTransfer(t *testing.T) {
 	api := &apimocks.MockApi{}
 	api.TransactionsContent = []dataserviceapi.Last10TxResponse{
 		dataserviceapi.Last10TxResponse{
-			Sender: apimocks.AliceChecksum,
-			Recipient: apimocks.BobChecksum,
-			TransferValue: strconv.Itoa(txValue),
+			Sender:          apimocks.AliceChecksum,
+			Recipient:       apimocks.BobChecksum,
+			TransferValue:   strconv.Itoa(txValue),
 			ContractAddress: tokenAddress,
-			TxHash: txHash,
-			DateBlock: time.Unix(txTimestamp, 0),
-			TokenSymbol: tokenSymbol,
-			TokenDecimals: strconv.Itoa(tokenDecimals),
+			TxHash:          txHash,
+			DateBlock:       time.Unix(txTimestamp, 0),
+			TokenSymbol:     tokenSymbol,
+			TokenDecimals:   strconv.Itoa(tokenDecimals),
 		},
 	}
 	api.VoucherDataContent = &models.VoucherDataResult{
 		TokenSymbol: tokenSymbol,
-		TokenName: tokenName,
+		TokenName:   tokenName,
 		//TokenDecimals: strconv.Itoa(tokenDecimals),
 		TokenDecimals: tokenDecimals,
-		SinkAddress: sinkAddress,
+		SinkAddress:   sinkAddress,
 	}
 	api.VouchersContent = []dataserviceapi.TokenHoldings{
 		dataserviceapi.TokenHoldings{
 			ContractAddress: tokenAddress,
-			TokenSymbol: tokenSymbol,
-			TokenDecimals: strconv.Itoa(tokenDecimals),
-			Balance: strconv.Itoa(tokenBalance),
+			TokenSymbol:     tokenSymbol,
+			TokenDecimals:   strconv.Itoa(tokenDecimals),
+			Balance:         strconv.Itoa(tokenBalance),
 		},
 	}
 	lookup.Api = api
@@ -98,8 +97,8 @@ func TestTokenTransfer(t *testing.T) {
 	}
 
 	ev := &apievent.EventTokenTransfer{
-		From: apimocks.BobChecksum,
-		To: apimocks.AliceChecksum,
+		From:  apimocks.BobChecksum,
+		To:    apimocks.AliceChecksum,
 		Value: txValue,
 	}
 
@@ -123,7 +122,7 @@ func TestTokenTransfer(t *testing.T) {
 	}
 	//if !bytes.Equal(v, []byte(strconv.Itoa(tokenBalance))) {
 	fmts := fmt.Sprintf("%%1.%df", tokenDecimals)
-	expect := fmt.Sprintf(fmts, float64(tokenBalance) / math.Pow(10, tokenDecimals))
+	expect := fmt.Sprintf(fmts, float64(tokenBalance)/math.Pow(10, tokenDecimals))
 	if !bytes.Equal(v, []byte(expect)) {
 		t.Fatalf("expected '%s', got %s", expect, v)
 	}
@@ -160,33 +159,32 @@ func TestTokenMint(t *testing.T) {
 	api := &apimocks.MockApi{}
 	api.TransactionsContent = []dataserviceapi.Last10TxResponse{
 		dataserviceapi.Last10TxResponse{
-			Sender: apimocks.AliceChecksum,
-			Recipient: apimocks.BobChecksum,
-			TransferValue: strconv.Itoa(txValue),
+			Sender:          apimocks.AliceChecksum,
+			Recipient:       apimocks.BobChecksum,
+			TransferValue:   strconv.Itoa(txValue),
 			ContractAddress: tokenAddress,
-			TxHash: txHash,
-			DateBlock: time.Unix(txTimestamp, 0),
-			TokenSymbol: tokenSymbol,
-			TokenDecimals: strconv.Itoa(tokenDecimals),
+			TxHash:          txHash,
+			DateBlock:       time.Unix(txTimestamp, 0),
+			TokenSymbol:     tokenSymbol,
+			TokenDecimals:   strconv.Itoa(tokenDecimals),
 		},
 	}
 	api.VoucherDataContent = &models.VoucherDataResult{
 		TokenSymbol: tokenSymbol,
-		TokenName: tokenName,
+		TokenName:   tokenName,
 		//TokenDecimals: strconv.Itoa(tokenDecimals),
 		TokenDecimals: tokenDecimals,
-		SinkAddress: sinkAddress,
+		SinkAddress:   sinkAddress,
 	}
 	api.VouchersContent = []dataserviceapi.TokenHoldings{
 		dataserviceapi.TokenHoldings{
 			ContractAddress: tokenAddress,
-			TokenSymbol: tokenSymbol,
-			TokenDecimals: strconv.Itoa(tokenDecimals),
-			Balance: strconv.Itoa(tokenBalance),
+			TokenSymbol:     tokenSymbol,
+			TokenDecimals:   strconv.Itoa(tokenDecimals),
+			Balance:         strconv.Itoa(tokenBalance),
 		},
 	}
 	lookup.Api = api
-
 
 	ctx := context.Background()
 	storageService := mocks.NewMemStorageService(ctx)
@@ -209,7 +207,7 @@ func TestTokenMint(t *testing.T) {
 	}
 
 	ev := &apievent.EventTokenMint{
-		To: apimocks.AliceChecksum,
+		To:    apimocks.AliceChecksum,
 		Value: txValue,
 	}
 
@@ -232,8 +230,8 @@ func TestTokenMint(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmts := fmt.Sprintf("%%1.%df", tokenDecimals)
-	expect := fmt.Sprintf(fmts, float64(tokenBalance) / math.Pow(10, tokenDecimals))
-	//if !bytes.Equal(v, []byte(strconv.Itoa(tokenBalance))) {
+	expect := fmt.Sprintf(fmts, float64(tokenBalance)/math.Pow(10, tokenDecimals))
+
 	if !bytes.Equal(v, []byte(expect)) {
 		t.Fatalf("expected '%d', got %s", tokenBalance, v)
 	}

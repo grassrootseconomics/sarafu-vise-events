@@ -9,15 +9,15 @@ import (
 	"syscall"
 
 	"git.defalsify.org/vise.git/logging"
-	"git.grassecon.net/grassrootseconomics/visedriver/storage"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event/nats"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
+	"git.grassecon.net/grassrootseconomics/visedriver/storage"
 )
 
 var (
-	logg          = logging.NewVanilla()
+	logg = logging.NewVanilla()
 )
 
 func main() {

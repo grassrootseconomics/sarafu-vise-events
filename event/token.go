@@ -34,7 +34,6 @@ func formatTransaction(tag string, idx int, item any) string {
 	return ""
 }
 
-
 // waiter to check whether object is available on dependency endpoints.
 func updateWait(ctx context.Context) error {
 	return nil

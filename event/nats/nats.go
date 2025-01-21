@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"git.defalsify.org/vise.git/logging"
+	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event"
+	geEvent "github.com/grassrootseconomics/eth-tracker/pkg/event"
 	nats "github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
-	geEvent "github.com/grassrootseconomics/eth-tracker/pkg/event"
-	"git.defalsify.org/vise.git/logging"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
-	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
 )
 
 var (
@@ -23,10 +23,10 @@ var (
 // Extends Router.
 type NatsSubscription struct {
 	*event.Router
-	ctx context.Context
+	ctx  context.Context
 	conn *nats.Conn
-	js jetstream.JetStream
-	cs jetstream.Consumer
+	js   jetstream.JetStream
+	cs   jetstream.Consumer
 	cctx jetstream.ConsumeContext
 }
 
@@ -37,13 +37,13 @@ func NewNatsSubscription(handler *apievent.EventsHandler) *NatsSubscription {
 	}
 }
 
-// Connect sets up the connection to the nats server and a consumer for the 
+// Connect sets up the connection to the nats server and a consumer for the
 // "Jetstream".
 //
 // Fails if connection fails or the "Jetstream" consumer cannot be set up.
 //
 // Once connected, it will attempt to reconnect if disconnected.
-func(n *NatsSubscription) Connect(ctx context.Context, connStr string) error {
+func (n *NatsSubscription) Connect(ctx context.Context, connStr string) error {
 	var err error
 
 	// enables set ctx in test, even if the connstr is invalid (js msg handler doesnt take context)
@@ -59,8 +59,8 @@ func(n *NatsSubscription) Connect(ctx context.Context, connStr string) error {
 		return err
 	}
 	n.cs, err = n.js.CreateConsumer(ctx, "TRACKER", jetstream.ConsumerConfig{
-		Name: config.JetstreamClientName,
-		Durable: config.JetstreamClientName,
+		Name:           config.JetstreamClientName,
+		Durable:        config.JetstreamClientName,
 		FilterSubjects: []string{"TRACKER.*"},
 	})
 	if err != nil {
@@ -71,14 +71,14 @@ func(n *NatsSubscription) Connect(ctx context.Context, connStr string) error {
 	logg.DebugCtxf(ctx, "nats connected, starting consumer", "status", n.conn.Status(), "server", serverInfo)
 	n.cctx, err = n.cs.Consume(n.handleEvent)
 	if err != nil {
-		return err		
+		return err
 	}
 
 	return nil
 }
 
 // Close cleanly brings down the nats and jetstream connection.
-func(n *NatsSubscription) Close() error {
+func (n *NatsSubscription) Close() error {
 	n.cctx.Stop()
 	select {
 	case <-n.cctx.Closed():
@@ -88,7 +88,7 @@ func(n *NatsSubscription) Close() error {
 }
 
 // jetstream message handler and acknowledger.
-func(n *NatsSubscription) handleEvent(m jetstream.Msg) {
+func (n *NatsSubscription) handleEvent(m jetstream.Msg) {
 	var ev geEvent.Event
 
 	logg.DebugCtxf(n.ctx, "have msg", "msg", m)

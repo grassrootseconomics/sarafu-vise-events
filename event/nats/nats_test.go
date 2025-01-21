@@ -9,34 +9,34 @@ import (
 	"testing"
 	"time"
 
-	nats "github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
-	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
 	"git.defalsify.org/vise.git/db"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
-	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
-	"git.grassecon.net/grassrootseconomics/sarafu-api/models"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
 	"git.grassecon.net/grassrootseconomics/common/hex"
+	"git.grassecon.net/grassrootseconomics/sarafu-api/models"
 	apimocks "git.grassecon.net/grassrootseconomics/sarafu-api/testutil/mocks"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/internal/testutil"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/application"
 	viseevent "git.grassecon.net/grassrootseconomics/sarafu-vise/handlers/event"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/store"
+	storedb "git.grassecon.net/grassrootseconomics/sarafu-vise/store/db"
 	"git.grassecon.net/grassrootseconomics/visedriver/testutil/mocks"
+	dataserviceapi "github.com/grassrootseconomics/ussd-data-service/pkg/api"
+	nats "github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 )
 
 const (
-	txBlock = 42
-	tokenAddress = "0x765DE816845861e75A25fCA122bb6898B8B1282a"
-	tokenSymbol = "FOO"
-	tokenName = "Foo Token"
+	txBlock       = 42
+	tokenAddress  = "0x765DE816845861e75A25fCA122bb6898B8B1282a"
+	tokenSymbol   = "FOO"
+	tokenName     = "Foo Token"
 	tokenDecimals = 6
-	txValue = 1337
-	tokenBalance = 362436
-	txTimestamp = 1730592500
-	txHash = "0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
-	sinkAddress = "0xb42C5920014eE152F2225285219407938469BBfA"
+	txValue       = 1337
+	tokenBalance  = 362436
+	txTimestamp   = 1730592500
+	txHash        = "0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
+	sinkAddress   = "0xb42C5920014eE152F2225285219407938469BBfA"
 )
 
 // TODO: jetstream, would have been nice of you to provide an easier way to make a mock msg
@@ -44,51 +44,51 @@ type testMsg struct {
 	data []byte
 }
 
-func(m *testMsg) Ack() error {
+func (m *testMsg) Ack() error {
 	return nil
 }
 
-func(m *testMsg) Nak() error {
+func (m *testMsg) Nak() error {
 	return nil
 }
 
-func(m *testMsg) NakWithDelay(time.Duration) error {
+func (m *testMsg) NakWithDelay(time.Duration) error {
 	return nil
 }
 
-func(m *testMsg) Data() []byte {
+func (m *testMsg) Data() []byte {
 	return m.data
 }
 
-func(m *testMsg) Reply() string {
+func (m *testMsg) Reply() string {
 	return ""
 }
 
-func(m *testMsg) Subject() string {
+func (m *testMsg) Subject() string {
 	return ""
 }
 
-func(m *testMsg) Term() error {
+func (m *testMsg) Term() error {
 	return nil
 }
 
-func(m *testMsg) TermWithReason(string) error {
+func (m *testMsg) TermWithReason(string) error {
 	return nil
 }
 
-func(m *testMsg) DoubleAck(ctx context.Context) error {
+func (m *testMsg) DoubleAck(ctx context.Context) error {
 	return nil
 }
 
-func(m *testMsg) Headers() nats.Header {
+func (m *testMsg) Headers() nats.Header {
 	return nats.Header{}
 }
 
-func(m *testMsg) InProgress() error {
+func (m *testMsg) InProgress() error {
 	return nil
 }
 
-func(m *testMsg) Metadata() (*jetstream.MsgMetadata, error) {
+func (m *testMsg) Metadata() (*jetstream.MsgMetadata, error) {
 	return nil, nil
 }
 
@@ -101,29 +101,29 @@ func TestHandleMsg(t *testing.T) {
 	api := &apimocks.MockApi{}
 	api.TransactionsContent = []dataserviceapi.Last10TxResponse{
 		dataserviceapi.Last10TxResponse{
-			Sender: apimocks.AliceChecksum,
-			Recipient: apimocks.BobChecksum,
-			TransferValue: strconv.Itoa(txValue),
+			Sender:          apimocks.AliceChecksum,
+			Recipient:       apimocks.BobChecksum,
+			TransferValue:   strconv.Itoa(txValue),
 			ContractAddress: tokenAddress,
-			TxHash: txHash,
-			DateBlock: time.Unix(txTimestamp, 0),
-			TokenSymbol: tokenSymbol,
-			TokenDecimals: strconv.Itoa(tokenDecimals),
+			TxHash:          txHash,
+			DateBlock:       time.Unix(txTimestamp, 0),
+			TokenSymbol:     tokenSymbol,
+			TokenDecimals:   strconv.Itoa(tokenDecimals),
 		},
 	}
 	api.VoucherDataContent = &models.VoucherDataResult{
 		TokenSymbol: tokenSymbol,
-		TokenName: tokenName,
+		TokenName:   tokenName,
 		//TokenDecimals: strconv.Itoa(tokenDecimals),
 		TokenDecimals: tokenDecimals,
-		SinkAddress: sinkAddress,
+		SinkAddress:   sinkAddress,
 	}
 	api.VouchersContent = []dataserviceapi.TokenHoldings{
 		dataserviceapi.TokenHoldings{
 			ContractAddress: tokenAddress,
-			TokenSymbol: tokenSymbol,
-			TokenDecimals: strconv.Itoa(tokenDecimals),
-			Balance: strconv.Itoa(tokenBalance),
+			TokenSymbol:     tokenSymbol,
+			TokenDecimals:   strconv.Itoa(tokenDecimals),
+			Balance:         strconv.Itoa(tokenBalance),
 		},
 	}
 	lookup.Api = api
@@ -182,8 +182,8 @@ func TestHandleMsg(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmts := fmt.Sprintf("%%1.%df", tokenDecimals)
-	expect := fmt.Sprintf(fmts, float64(tokenBalance) / math.Pow(10, tokenDecimals))
-	//if !bytes.Equal(v, []byte(strconv.Itoa(tokenBalance))) {
+	expect := fmt.Sprintf(fmts, float64(tokenBalance)/math.Pow(10, tokenDecimals))
+
 	if !bytes.Equal(v, []byte(expect)) {
 		t.Fatalf("expected '%d', got %s", tokenBalance, v)
 	}
@@ -195,7 +195,6 @@ func TestHandleMsg(t *testing.T) {
 	if !bytes.Contains(v, []byte("abcdef")) {
 		t.Fatal("no transaction data")
 	}
-
 
 	mh, err := application.NewMenuHandlers(nil, userStore, nil, testutil.ReplaceSeparatorFunc)
 	if err != nil {
@@ -210,14 +209,4 @@ func TestHandleMsg(t *testing.T) {
 	if rrs.Content != expect {
 		t.Fatalf("expected '%v', got '%v'", expect, rrs.Content)
 	}
-//	userDb.SetPrefix(event.DATATYPE_USERSUB)
-//	userDb.SetSession(apimocks.AliceSession)
-//	k := append([]byte("vouchers"), []byte("sym")...)
-//	v, err = userDb.Get(ctx, k)
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	if !bytes.Contains(v, []byte(fmt.Sprintf("1:%s", tokenSymbol))) {
-//		t.Fatalf("expected '1:%s', got %s", tokenSymbol, v)
-//	}
 }

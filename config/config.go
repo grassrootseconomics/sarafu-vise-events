@@ -1,21 +1,21 @@
 package config
 
 import (
-	viseconfig "git.grassecon.net/grassrootseconomics/visedriver/config"
 	apiconfig "git.grassecon.net/grassrootseconomics/sarafu-api/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise/config"
+	viseconfig "git.grassecon.net/grassrootseconomics/visedriver/config"
 	"git.grassecon.net/grassrootseconomics/visedriver/env"
 )
 
 var (
-	JetstreamURL string
+	JetstreamURL        string
 	JetstreamClientName string
-	Apply = config.Apply
-	GetConns = config.GetConns
+	Apply               = config.Apply
+	GetConns            = config.GetConns
 )
 
 const (
-	defaultJetstreamURL string = "localhost:4222"
+	defaultJetstreamURL        string = "localhost:4222"
 	defaultJetstreamClientName string = "omnom"
 )
 

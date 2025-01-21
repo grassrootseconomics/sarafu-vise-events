@@ -1,8 +1,8 @@
 package event
 
 import (
-	geEvent "github.com/grassrootseconomics/eth-tracker/pkg/event"
 	apievent "git.grassecon.net/grassrootseconomics/sarafu-api/event"
+	geEvent "github.com/grassrootseconomics/eth-tracker/pkg/event"
 )
 
 const (
