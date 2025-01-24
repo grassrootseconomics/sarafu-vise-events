@@ -1,9 +1,8 @@
 package config
 
 import (
-	apiconfig "git.grassecon.net/grassrootseconomics/sarafu-api/config"
-	"git.grassecon.net/grassrootseconomics/sarafu-vise/config"
 	viseconfig "git.grassecon.net/grassrootseconomics/visedriver/config"
+	"git.grassecon.net/grassrootseconomics/sarafu-vise/config"
 	"git.grassecon.net/grassrootseconomics/visedriver/env"
 )
 
@@ -20,11 +19,7 @@ const (
 )
 
 func LoadConfig() error {
-	err := viseconfig.LoadConfig()
-	if err != nil {
-		return err
-	}
-	err = apiconfig.LoadConfig()
+	err := config.LoadConfig()
 	if err != nil {
 		return err
 	}
@@ -35,8 +30,4 @@ func LoadConfig() error {
 
 func Language() string {
 	return viseconfig.DefaultLanguage
-}
-
-func NewOverride() config.Override {
-	return config.Override{}
 }

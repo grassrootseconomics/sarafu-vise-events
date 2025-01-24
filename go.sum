@@ -4,10 +4,10 @@ git.grassecon.net/grassrootseconomics/common v0.0.0-20250121134736-ba8cbbccea7d 
 git.grassecon.net/grassrootseconomics/common v0.0.0-20250121134736-ba8cbbccea7d/go.mod h1:wgQJZGIS6QuNLHqDhcsvehsbn5PvgV7aziRebMnJi60=
 git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250121135150-e0b539809805 h1:deGnqf4YCsbxhXgjFEjYjTUCvciLEmI26T9IysRsQXY=
 git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250121135150-e0b539809805/go.mod h1:9bc3d//Qqm11hz7GYRdQc1Uan+0GJIOpvRBbv8cHMu8=
-git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250121142648-4baacb325d2b h1:kUQW5cM4Q7TogrUfrxFjdvA/BYCescsAZBtf5teLYrY=
-git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250121142648-4baacb325d2b/go.mod h1:AF6qgkV+OmxamrPcrzZfsRUYTaQMZXBRejRg7dIKej4=
-git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250121134912-f7d31e4e8162 h1:NaPbgGQ1Nb+yYF+Qj1LSagpjYeDcSXST8iZwONg4afY=
-git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250121134912-f7d31e4e8162/go.mod h1:pjKp9L/ZsWW3kMB0UoIl1yv9TBIuU33mn9Aghxp7vGk=
+git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250124084723-9a094f440f86 h1:wqISfQKU7nJgKVGGMm/b0M46tMRmvkBc+riLOWzd7ss=
+git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250124084723-9a094f440f86/go.mod h1:kt/HZVYJZoQLzJtHKSfltZu7+khRUUq5P98PtPpKbUc=
+git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250122123424-6749c632b0a2 h1:ON77G5K0JNuwPb5JT/hRfF6G6+xstlBQgEIEzWydnhg=
+git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250122123424-6749c632b0a2/go.mod h1:pjKp9L/ZsWW3kMB0UoIl1yv9TBIuU33mn9Aghxp7vGk=
 github.com/alecthomas/assert/v2 v2.2.2 h1:Z/iVC0xZfWTaFNE6bA3z07T86hd45Xe2eLt6WVy2bbk=
 github.com/alecthomas/assert/v2 v2.2.2/go.mod h1:pXcQ2Asjp247dahGEmsZ6ru0UVwnkhktn7S0bBDLxvQ=
 github.com/alecthomas/participle/v2 v2.0.0 h1:Fgrq+MbuSsJwIkw3fEj9h75vDP0Er5JzepJ0/HNHv0g=

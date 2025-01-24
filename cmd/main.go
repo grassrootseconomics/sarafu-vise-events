@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"git.defalsify.org/vise.git/logging"
+	sarafuconfig "git.grassecon.net/grassrootseconomics/sarafu-vise/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/config"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/event/nats"
 	"git.grassecon.net/grassrootseconomics/sarafu-vise-events/lookup"
@@ -23,7 +24,7 @@ var (
 func main() {
 	config.LoadConfig()
 
-	override := config.NewOverride()
+	override := sarafuconfig.NewOverride()
 
 	flag.StringVar(override.DbConn, "c", "?", "default connection string (replaces all unspecified strings)")
 	flag.StringVar(override.ResourceConn, "resource", "?", "resource connection string")
@@ -31,8 +32,8 @@ func main() {
 	flag.StringVar(override.StateConn, "state", "?", "state store connection string")
 	flag.Parse()
 
-	config.Apply(&override)
-	conns, err := config.GetConns()
+	sarafuconfig.Apply(override)
+	conns, err := sarafuconfig.GetConns()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "conn specification error: %v\n", err)
 		os.Exit(1)
