@@ -26,10 +26,10 @@ func main() {
 
 	override := sarafuconfig.NewOverride()
 
-	flag.StringVar(override.DbConn, "c", "?", "default connection string (replaces all unspecified strings)")
-	flag.StringVar(override.ResourceConn, "resource", "?", "resource connection string")
-	flag.StringVar(override.UserConn, "userdata", "?", "userdata store connection string")
-	flag.StringVar(override.StateConn, "state", "?", "state store connection string")
+	flag.StringVar(&override.DbConn, "c", "?", "default connection string (replaces all unspecified strings)")
+	flag.StringVar(&override.ResourceConn, "resource", "?", "resource connection string")
+	flag.StringVar(&override.UserConn, "userdata", "?", "userdata store connection string")
+	flag.StringVar(&override.StateConn, "state", "?", "state store connection string")
 	flag.Parse()
 
 	sarafuconfig.Apply(override)
