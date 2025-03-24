@@ -6,10 +6,10 @@ require (
 	git.defalsify.org/vise.git v0.3.1
 	git.grassecon.net/grassrootseconomics/common v0.0.0-20250121134736-ba8cbbccea7d
 	git.grassecon.net/grassrootseconomics/sarafu-api v0.9.0-beta.1.0.20250310093912-8145b4bd004b
-	git.grassecon.net/grassrootseconomics/sarafu-vise v1.0.0-rc.10
+	git.grassecon.net/grassrootseconomics/sarafu-vise v1.0.0-rc.12.0.20250324165708-419716a2b4e9
 	git.grassecon.net/grassrootseconomics/visedriver v0.9.0-beta.2
 	github.com/grassrootseconomics/eth-tracker v1.6.1-celo-prefork-rc
-	github.com/grassrootseconomics/ussd-data-service v1.2.0-beta
+	github.com/grassrootseconomics/ussd-data-service v1.4.0-beta
 	github.com/nats-io/nats.go v1.37.0
 )
 
