@@ -3,13 +3,13 @@ module git.grassecon.net/grassrootseconomics/sarafu-vise-events
 go 1.23.4
 
 require (
-	git.defalsify.org/vise.git v0.2.3-0.20250120121301-10739fb4a8c9
+	git.defalsify.org/vise.git v0.3.1
 	git.grassecon.net/grassrootseconomics/common v0.0.0-20250121134736-ba8cbbccea7d
-	git.grassecon.net/grassrootseconomics/sarafu-api v0.0.0-20250121135150-e0b539809805
-	git.grassecon.net/grassrootseconomics/sarafu-vise v0.0.0-20250124084723-9a094f440f86
-	git.grassecon.net/grassrootseconomics/visedriver v0.8.0-beta.10.0.20250122123424-6749c632b0a2
-	github.com/grassrootseconomics/eth-tracker v1.3.0-rc
-	github.com/grassrootseconomics/ussd-data-service v1.2.0-beta
+	git.grassecon.net/grassrootseconomics/sarafu-api v0.9.0-beta.1.0.20250310093912-8145b4bd004b
+	git.grassecon.net/grassrootseconomics/sarafu-vise v1.0.0-rc.12.0.20250324165708-419716a2b4e9
+	git.grassecon.net/grassrootseconomics/visedriver v0.9.0-beta.2
+	github.com/grassrootseconomics/eth-tracker v1.6.1-celo-prefork-rc
+	github.com/grassrootseconomics/ussd-data-service v1.4.0-beta
 	github.com/nats-io/nats.go v1.37.0
 )
 
