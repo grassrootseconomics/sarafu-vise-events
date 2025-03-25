@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /build
 RUN echo "Building on $BUILDPLATFORM, building for $TARGETPLATFORM"
 RUN go mod download
-RUN go build -tags logtrace -o sarafu-vise-events -ldflags="-X main.build=${BUILD} -s -w" cmd/main.go
+RUN go build -tags logwarn -o sarafu-vise-events -ldflags="-X main.build=${BUILD} -s -w" cmd/main.go
 
 FROM debian:bookworm-slim
 
