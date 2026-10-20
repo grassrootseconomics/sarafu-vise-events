@@ -1,6 +1,6 @@
 module git.grassecon.net/grassrootseconomics/sarafu-vise-events
 
-go 1.23.4
+go 1.24
 
 require (
 	git.defalsify.org/vise.git v0.3.1
@@ -26,7 +26,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.1 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/klauspost/compress v1.17.2 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/mattn/kinako v0.0.0-20170717041458-332c0a7e205a // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect

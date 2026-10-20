@@ -4,8 +4,6 @@ git.grassecon.net/grassrootseconomics/common v0.0.0-20250121134736-ba8cbbccea7d 
 git.grassecon.net/grassrootseconomics/common v0.0.0-20250121134736-ba8cbbccea7d/go.mod h1:wgQJZGIS6QuNLHqDhcsvehsbn5PvgV7aziRebMnJi60=
 git.grassecon.net/grassrootseconomics/sarafu-api v0.9.0-beta.1.0.20250310093912-8145b4bd004b h1:xiTpaqWWoF5qcnarY/9ZkT6aVdnKwqztb2gzIahJn4w=
 git.grassecon.net/grassrootseconomics/sarafu-api v0.9.0-beta.1.0.20250310093912-8145b4bd004b/go.mod h1:gOn89ipaDcDvmQXRMQYKUqcw/sJcwVOPVt2eC6Geip8=
-git.grassecon.net/grassrootseconomics/sarafu-vise v1.0.0-rc.10 h1:zUZoTdeiCr/sLfFP20lZeAb6ULD0PZwPqITC4H11T2Y=
-git.grassecon.net/grassrootseconomics/sarafu-vise v1.0.0-rc.10/go.mod h1:Quy9IpkAIII/Z5xEg3Rw8xC1Ucpk31fn+cnA0Fansyw=
 git.grassecon.net/grassrootseconomics/sarafu-vise v1.0.0-rc.12.0.20250324165708-419716a2b4e9 h1:BRmBC68e3yqvDfNmBJKWtNadHs6acfuHw+rKyPO1gqI=
 git.grassecon.net/grassrootseconomics/sarafu-vise v1.0.0-rc.12.0.20250324165708-419716a2b4e9/go.mod h1:Quy9IpkAIII/Z5xEg3Rw8xC1Ucpk31fn+cnA0Fansyw=
 git.grassecon.net/grassrootseconomics/visedriver v0.9.0-beta.2 h1:YFztSsexCUgFo6M0tbngRwYdgJd3LQV3RO/Jw09u3+k=
@@ -45,8 +43,8 @@ github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo
 github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
-github.com/klauspost/compress v1.17.2 h1:RlWWUY/Dr4fL8qk9YG7DTZ7PDgME2V4csBXA8L/ixi4=
-github.com/klauspost/compress v1.17.2/go.mod h1:ntbaceVETuRiXiv4DpjP66DpAtAGkEQskQzEyD//IeE=
+github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
 github.com/kr/pretty v0.3.0 h1:WgNl7dwNpEZ6jJ9k1snq4pZsg7DOEN8hP9Xw0Tsjwk0=
 github.com/kr/pretty v0.3.0/go.mod h1:640gp4NfQd8pI5XOwp5fnNeVWj67G7CFk/SaSQn7NBk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
